@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jinja Practice</title>
+</head>
+<body>
+<p>Inserting simple python variable {{ var_name }}</p>
+
+<p>Expression handling {{ score + 10 }}</p>
+
+<p> If - Else Block </p>
+    {% if marks>=50 %}
+        <p>pass</p>
+    {% else %}
+        <p>fail</p>
+    {%  endif %}
+
+
+<p> Loops </p>
+    <ul>
+    {% for student in students %}
+        <li>{{ student.name }} - {{ student.marks }}</li>
+    {% endfor %}
+
+    </ul>
+
+<p> Fliters </p>
+<p>{{ name|upper }}</p> <!-- ALICE -->
+<p>{{ name|lower }}</p> <!-- alice -->
+<p>{{ name|length }}</p> <!-- length of string -->
+
+</body>
+</html>
