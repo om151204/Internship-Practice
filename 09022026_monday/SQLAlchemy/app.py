@@ -21,7 +21,7 @@ class User(Base):
     def __repr__(self):
         return f"User:- (id={self.id}, name='{self.name}', age={self.age})"
 
-# Base.metadata.create_all(engine) (This line creates the table in the SQL Server Management Studio)
+# Base.metadata.create_all(engine) This line creates the table in the SQL Server Management Studio
 
 # Create Session
 Session = sessionmaker(bind=engine)
