@@ -7,11 +7,10 @@ app = FastAPI()
 
 class Student(BaseModel):
     # id: int
-    name: Optional[str] = None
-    marks: Optional[list] = None
+    name: str
+    marks: list
     # name: str
     # marks: int
-
 
 db = {1: {"name": "om", "marks": [10, 20, 30]},
       2: {"name": "harsh", "marks": [10, 20, 30]}}
@@ -39,7 +38,7 @@ def get_student():
 #     return db[int(student_id)]
 
 @app.put("/student/{std_id}")
-def update_student(std_id: int, student_data):
+def update_student(std_id: int, student_data:Student):
     if std_id in db:
         db[std_id] = student_data
         return {f"Student {std_id} updated successfully"}
