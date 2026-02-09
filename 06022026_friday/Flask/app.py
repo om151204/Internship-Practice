@@ -3,6 +3,7 @@ from flask import Flask, request, render_template,redirect,url_for,jsonify
 app = Flask(__name__)
 
 my_dict = {}
+# my_dict{}
 
 @app.route("/add_student",methods = ["POST"])
 def add_student():
