@@ -51,6 +51,14 @@ class MongoDemo:
         new2 = {"$set":{"marks":[1,1,1]}}
         self.collection.update_many(prev,new2)
         print("Many Collections updated")
+        """
+        """
+        # The filter finds the document AND identifies the '2' inside the array
+        filter_query = {"marks": 90}
+        # The '$' acts as a placeholder for the index where '2' was found
+        update_query = {"$set": {"marks.$": 200}}
+        self.collection.update_one(filter_query, update_query)
+        print("Updated marks for om from [100,90,95] to [100,200,95]")
 
     def delete_records(self):
         self.collection.delete_one({"name":"Samarth Prajapati"})
@@ -63,13 +71,16 @@ class MongoDemo:
 
 if __name__ == "__main__":
     obj1 = MongoDemo()
-    obj1.inserting_records()
-    obj1.display_records()
+    # obj1.inserting_records()
+    # obj1.display_records()
+    # obj1.update_records()
+    # obj1.inserting_records()
+    # obj1.display_records()
+    # obj1.delete_records()
+    # obj1.display_records()
     obj1.update_records()
-    obj1.inserting_records()
     obj1.display_records()
-    obj1.delete_records()
-    obj1.display_records()
+
 
 
 
