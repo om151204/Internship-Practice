@@ -42,6 +42,12 @@ class MongoDemo:
         for record in multiple_records:
             print(record)
 
+        users = self.collection.find({"age": {"$gt": 21}})
+        for user in users:
+            print(user)
+
+
+
     def update_records(self):
         prev = {"name":"Harsh Mistry"}
         new1 = {"$set":{"marks":[100,100,100]}}
@@ -52,6 +58,8 @@ class MongoDemo:
         self.collection.update_many(prev,new2)
         print("Many Collections updated")
         """
+        Below method updates the marks list of Om Amit Mishra
+        from [100,90,95] to [100,200,95]
         """
         # The filter finds the document AND identifies the '2' inside the array
         filter_query = {"marks": 90}
@@ -60,6 +68,11 @@ class MongoDemo:
         self.collection.update_one(filter_query, update_query)
         print("Updated marks for om from [100,90,95] to [100,200,95]")
 
+        self.collection.update_many({"age":{"$lt":30}}, {"$set":{"category":"interns"}})
+        print("Updated records")
+
+        self.collection.update_many({"age":{"$lt":25,"$gt":21}}, {"$set":{"is_active":False}})
+
     def delete_records(self):
         self.collection.delete_one({"name":"Samarth Prajapati"})
         print("Record deleted")
@@ -67,18 +80,14 @@ class MongoDemo:
         print("Many Collections deleted")
 
 
-
-
 if __name__ == "__main__":
     obj1 = MongoDemo()
-    # obj1.inserting_records()
-    # obj1.display_records()
-    # obj1.update_records()
-    # obj1.inserting_records()
-    # obj1.display_records()
-    # obj1.delete_records()
-    # obj1.display_records()
+    obj1.inserting_records()
+    obj1.display_records()
     obj1.update_records()
+    obj1.inserting_records()
+    obj1.display_records()
+    obj1.delete_records()
     obj1.display_records()
 
 
