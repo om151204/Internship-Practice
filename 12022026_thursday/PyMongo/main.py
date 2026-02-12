@@ -51,7 +51,7 @@ class MongoDemo:
         new1 = {"$set":{"marks":[100,100,100]}}
         self.collection.update_one(prev, new1)
         print("One Collection updated")
-        prev = {"name":"Harsh Mistry"}
+        prev = {"name":"Harsh Piyushkumar Mistry"}
         new2 = {"$set":{"marks":[1,1,1]}}
         self.collection.update_many(prev,new2)
         print("Many Collections updated")
@@ -93,8 +93,24 @@ class MongoDemo:
         print("Updated records as pass/fail based on aggregate marks")
 
     def advance_updates(self):
+        """
+        $inc: Increments a numeric field by a specific amount only works with numeric values
+        $push: Appends a new value to an existing array
+        $unset: Removes a specific field from the document and deletes the 'category' field we created earlier
+        :return: None
+        """
         self.collection.update_one({"name":"Om Amit Mishra"},{"$inc":{"age":1}},)
         print("Incremented age by 1")
+
+        self.collection.update_one({"name":"Om Amit Mishra"},{"$push":{"marks":300}},)
+        print("Appended 300 in the marks list")
+
+        self.collection.update_many({},{"$unset":{"category":""}})
+        print("All the categories are now removed")
+
+
+
+
 
 
 if __name__ == "__main__":
