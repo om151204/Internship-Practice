@@ -28,7 +28,7 @@ class Student(BaseModel):
     marks:List[StrictFloat] = List[Field(gt = 0,lt = 100)]
 
 # Create
-@app.post("/student",status_code=status.HTTP_201_CREATED)
+@app.post("/student",status_code=status.HTTP_201_CREATED,tags=["Create"])
 def add_student(req_data: Student):
     """
     Add student to database
@@ -48,7 +48,7 @@ def add_student(req_data: Student):
     return f"Student {req_data.name} added successfully with id {_id}"
 
 # Read
-@app.get("/student",status_code=status.HTTP_200_OK)
+@app.get("/student",status_code=status.HTTP_200_OK,tags=["Read"])
 def get_student():
     """
     Get all students data
@@ -58,7 +58,7 @@ def get_student():
     db_records = [i for i in collection.find()]
     return db_records
 
-@app.get("/student/{id_}",status_code=status.HTTP_200_OK)
+@app.get("/student/{id_}",status_code=status.HTTP_200_OK,tags=["Read"])
 def get_student(id_: int):
     """
     Get student data from their id
@@ -73,10 +73,9 @@ def get_student(id_: int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found")
 
 # Update
-@app.put("/student/{id_}",status_code=status.HTTP_202_ACCEPTED)
+@app.put("/student/{id_}",status_code=status.HTTP_202_ACCEPTED,tags=["Update"])
 def put_student(req_data: Student,id_:int):
     """
-
     :param req_data: Student
     :param id_: int
     :return: Success message along with id of the student
@@ -89,7 +88,7 @@ def put_student(req_data: Student,id_:int):
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found" )
 
-@app.patch("/student/{id_}",status_code=status.HTTP_200_OK)
+@app.patch("/student/{id_}",status_code=status.HTTP_200_OK,tags=["Update"])
 def patch_student(req_data: Student,id_:int):
     """
     :param req_data: Student
@@ -109,6 +108,20 @@ def patch_student(req_data: Student,id_:int):
                                         }
                           )
     return f"Student {id_} updated successfully"
+
+# Delete
+@app.delete("/student/{id_}",status_code=status.HTTP_202_ACCEPTED,tags=["Delete"])
+def delete_student(id_:int):
+    """
+    :param id_: int
+    :return: Success message along with id of the student
+    """
+    collection = connect_mongodb()
+    db_rec = collection.find_one({"_id":id_})
+    if not db_rec:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found")
+    collection.delete_one({"_id": id_})
+    return f"Student {id_} deleted successfully"
 
 
 
