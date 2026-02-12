@@ -36,8 +36,9 @@ def add_student(req_data: Student):
     :return: Success message along with id and name of student
     """
     collection = connect_mongodb()
-    total_students = [i for i in collection.find()]
-    _id = len(total_students) + 1
+    # total_students = [i for i in collection.find()]
+    # _id = len(total_students) + 1
+    _id = collection.count_documents({}) + 1
     collection.insert_one({
         "_id": _id,
         "name":req_data.name,
@@ -100,7 +101,7 @@ def patch_student(req_data: Student,id_:int):
     if not db_rec:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found")
 
-    collection.update_one({"_id": id_},{"$set":{"name":req_data.name if req_data.name !="string" else db_rec["name"],
+    collection.update_one({"_id": id_},{"$set":{"name":req_data.name if not req_data.name !="string" else db_rec["name"],
                                                 "age":req_data.age if req_data.age != 1 else db_rec["age"],
                                                 "gender":req_data.gender if req_data.gender != "string" else db_rec["gender"],
                                                 "marks":req_data.marks if req_data.marks != [0] else db_rec["marks"]
