@@ -89,6 +89,26 @@ def put_student(req_data: Student,id_:int):
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found" )
 
+@app.patch("/student/{id_}",status_code=status.HTTP_200_OK)
+def patch_student(req_data: Student,id_:int):
+    """
+    :param req_data: Student
+    :param id_: int
+    :return: Success message along with id of the student
+    """
+    collection = connect_mongodb()
+    db_rec = collection.find_one({"_id":id_})
+    if not db_rec:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found")
+
+    collection.update_one({"_id": id_},{"$set":{"name":req_data.name if req_data.name !="string" else db_rec["name"],
+                                                "age":req_data.age if req_data.age != 1 else db_rec["age"],
+                                                "gender":req_data.gender if req_data.gender != "string" else db_rec["gender"],
+                                                "marks":req_data.marks if req_data.marks != [0] else db_rec["marks"]
+                                                }
+                                        }
+                          )
+    return f"Student {id_} updated successfully"
 
 
 
