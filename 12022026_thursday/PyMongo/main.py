@@ -99,17 +99,35 @@ class MongoDemo:
         $unset: Removes a specific field from the document and deletes the 'category' field we created earlier
         :return: None
         """
-        self.collection.update_one({"name":"Om Amit Mishra"},{"$inc":{"age":1}},)
+        self.collection.update_one({"name":"Om Amit Mishra"},{"$inc":{"age":1}})
         print("Incremented age by 1")
 
-        self.collection.update_one({"name":"Om Amit Mishra"},{"$push":{"marks":300}},)
+        self.collection.update_one({"name":"Om Amit Mishra"},{"$push":{"marks":300}})
         print("Appended 300 in the marks list")
 
         self.collection.update_many({},{"$unset":{"category":""}})
         print("All the categories are now removed")
 
+    def diaplay_sorted_average(self):
+        # students = self.collection.find()
+        # students_list= []
+        # for student in students:
+        #     marks = students.get("marks",[])
+        #     avg = sum(marks)/len(marks) if len(marks) > 0 else 0
+        #     students_list.append({"name":student["name"],"avg":avg})
 
+        pipeline = [
+            {
+                "$project":{"name":1,"age":1,"_id":0,"average":{"$avg":"$marks"}}
+            },
+            {
+                "$sort":{"average":-1}
+            }
+        ]
 
+        results = self.collection.aggregate(pipeline)
+        for res in results:
+            print(res)
 
 
 
@@ -123,7 +141,8 @@ if __name__ == "__main__":
     # obj1.delete_records()
     # obj1.display_records()
     # obj1.pass_or_fail()
-    obj1.advance_updates()
+    # obj1.advance_updates()
+    obj1.diaplay_sorted_average()
 
 
 
