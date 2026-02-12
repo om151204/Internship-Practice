@@ -29,6 +29,11 @@ class Student(BaseModel):
 
 @app.post("/student",status_code=status.HTTP_201_CREATED)
 def add_student(req_data: Student):
+    """
+    Add student to database
+    :param req_data: dict of student data
+    :return: Success message along with id and name of student
+    """
     collection = connect_mongodb()
     total_students = [i for i in collection.find()]
     _id = len(total_students) + 1
@@ -40,6 +45,19 @@ def add_student(req_data: Student):
         "marks":req_data.marks,
     })
     return f"Student {req_data.name} added successfully with id {_id}"
+
+@app.get("/student",status_code=status.HTTP_200_OK)
+def get_student():
+    """
+    Get all students data
+    :return: Record of all the students
+    """
+    collection = connect_mongodb()
+    db_records = [i for i in collection.find()]
+    return db_records
+
+
+
 
 
 
