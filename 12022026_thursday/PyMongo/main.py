@@ -77,16 +77,34 @@ class MongoDemo:
         self.collection.delete_many({"name":"Harsh Mistry"})
         print("Many Collections deleted")
 
+    def pass_or_fail(self):
+        """
+        This function does if-else in pymongo.
+        :return:
+        """
+        students_data = self.collection.find()
+        for student in students_data:
+            total_marks = sum(student.get("marks",[]))
+            if total_marks > 200:
+                result_status = "Pass"
+            else:
+                result_status = "Fail"
+            self.collection.update_one({"_id":student["_id"]}, {"$set":{"result":result_status}})
+        print("Updated records as pass/fail based on aggregate marks")
+
+
 
 if __name__ == "__main__":
     obj1 = MongoDemo()
-    obj1.inserting_records()
-    obj1.display_records()
-    obj1.update_records()
-    obj1.inserting_records()
-    obj1.display_records()
-    obj1.delete_records()
-    obj1.display_records()
+    # obj1.inserting_records()
+    # obj1.display_records()
+    # obj1.update_records()
+    # obj1.inserting_records()
+    # obj1.display_records()
+    # obj1.delete_records()
+    # obj1.display_records()
+    # obj1.pass_or_fail()
+
 
 
 
