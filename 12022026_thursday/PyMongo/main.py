@@ -92,6 +92,9 @@ class MongoDemo:
             self.collection.update_one({"_id":student["_id"]}, {"$set":{"result":result_status}})
         print("Updated records as pass/fail based on aggregate marks")
 
+    def advance_updates(self):
+        self.collection.update_one({"name":"Om Amit Mishra"},{"$inc":{"age":1}},)
+        print("Incremented age by 1")
 
 
 if __name__ == "__main__":
@@ -104,6 +107,7 @@ if __name__ == "__main__":
     # obj1.delete_records()
     # obj1.display_records()
     # obj1.pass_or_fail()
+    obj1.advance_updates()
 
 
 
