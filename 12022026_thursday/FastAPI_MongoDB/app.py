@@ -27,6 +27,7 @@ class Student(BaseModel):
     gender: StrictStr
     marks:List[StrictFloat] = List[Field(gt = 0,lt = 100)]
 
+# Create
 @app.post("/student",status_code=status.HTTP_201_CREATED)
 def add_student(req_data: Student):
     """
@@ -46,6 +47,7 @@ def add_student(req_data: Student):
     })
     return f"Student {req_data.name} added successfully with id {_id}"
 
+# Read
 @app.get("/student",status_code=status.HTTP_200_OK)
 def get_student():
     """
@@ -56,14 +58,39 @@ def get_student():
     db_records = [i for i in collection.find()]
     return db_records
 
-@app.get("/student/{id}",status_code=status.HTTP_200_OK)
-def get_student(id: int):
+@app.get("/student/{id_}",status_code=status.HTTP_200_OK)
+def get_student(id_: int):
+    """
+    Get student data from their id
+    :param id_: int
+    :return: Student data with the provided id
+    """
     collection = connect_mongodb()
-    db_rec = collection.find_one({"_id": id},{"_id":0})
+    db_rec = collection.find_one({"_id": id_},{"_id":0})
     if db_rec:
         return db_rec
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found")
+
+# Update
+@app.put("/student/{id_}",status_code=status.HTTP_202_ACCEPTED)
+def put_student(req_data: Student,id_:int):
+    """
+
+    :param req_data: Student
+    :param id_: int
+    :return: Success message along with id of the student
+    """
+    collection = connect_mongodb()
+    db_rec = collection.find_one({"_id":id_})
+    if db_rec:
+        collection.update_one({"_id": id_},{"$set":req_data.__dict__})
+        return f"Student {id_} updated successfully"
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found" )
+
+
+
 
 
 
