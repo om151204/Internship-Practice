@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from fastapi import FastAPI,status
+from fastapi import FastAPI,status,HTTPException
 from pydantic import BaseModel, StrictStr,StrictInt, StrictFloat,Field
 from typing import List
 
@@ -55,6 +55,15 @@ def get_student():
     collection = connect_mongodb()
     db_records = [i for i in collection.find()]
     return db_records
+
+@app.get("/student/{id}",status_code=status.HTTP_200_OK)
+def get_student(id: int):
+    collection = connect_mongodb()
+    db_rec = collection.find_one({"_id": id},{"_id":0})
+    if db_rec:
+        return db_rec
+    else:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Student not found")
 
 
 
