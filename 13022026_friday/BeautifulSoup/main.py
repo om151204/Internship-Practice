@@ -1,7 +1,8 @@
 import csv
-
+from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 import requests
+from sqlalchemy.orm.base import CALLABLES_OK
 
 url = "https://www.crummy.com/software/BeautifulSoup/bs4/doc/"
 
@@ -59,6 +60,12 @@ def store_to_csv(soup):
         # 4. Now writerows receives a list of dicts, which it expects
         writer.writerows(data_to_save)
 
+def link_extractor(soup):
+    links = soup.find_all("a")
+    for link in links:
+        href = link.get("href")
+        full_href = urljoin(url, href)
+        print(full_href)
 
 
 
@@ -75,6 +82,6 @@ def store_to_csv(soup):
 
 if __name__ == "__main__":
     data = parsing_using_beautifulsoup()
-    store_to_csv(data)
+    link_extractor(data)
 
 
