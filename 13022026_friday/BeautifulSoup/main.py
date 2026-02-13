@@ -1,3 +1,5 @@
+import csv
+
 from bs4 import BeautifulSoup
 import requests
 
@@ -41,6 +43,27 @@ def store_data_in_list(soup):
         })
     print(page_headings)
 
+def store_to_csv(soup):
+    # 1. Find all div tags with the class "highlight"
+    codes = soup.select_one("div.highlight-default pre")
+
+    # 2. Transform the Tag objects into a list of dictionaries containing just the text
+    # We use .get_text() to extract only the code snippets
+    data_to_save = [{"code snippets": tag.get_text().strip()} for tag in codes]
+
+    # 3. Open file with newline="" to avoid blank rows
+    with open("codes.csv", "w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=["code snippets"])
+        writer.writeheader()
+
+        # 4. Now writerows receives a list of dicts, which it expects
+        writer.writerows(data_to_save)
+
+
+
+
+
+
 
 
 
@@ -52,6 +75,6 @@ def store_data_in_list(soup):
 
 if __name__ == "__main__":
     data = parsing_using_beautifulsoup()
-    store_data_in_list(data)
+    store_to_csv(data)
 
 
