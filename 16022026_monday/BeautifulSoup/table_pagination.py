@@ -5,6 +5,10 @@ import pandas as pd
 url = "https://www.scrapethissite.com/pages/forms/"
 
 def basic_config():
+    """
+    Basic configuration for beautiful soup
+    :return: Soup object
+    """
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url,headers=headers)
     soup = BeautifulSoup(response.text,"html.parser")
@@ -13,12 +17,22 @@ def basic_config():
 
 
 def extracting_table_headers(soup):
+    """
+    :param soup: BeautifulSoup object
+    extracting table headers
+    :return: None
+    """
     all_headers = []
     for th in soup.find_all("th"):
         all_headers.append(th.get_text(strip=True))
     print(all_headers)
 
 def extracting_table_rows(soup):
+    """
+    :param soup: BeautifulSoup object
+    extracting table rows
+    :return: None
+    """
     table = soup.select_one("table.table")
     rows = table.select("tr")[1:]
     header = table.select("tr th")
@@ -30,6 +44,11 @@ def extracting_table_rows(soup):
         print(data)
 
 def extracting_table_in_dataframe(soup):
+    """
+    :param soup: BeautifulSoup object
+    extracting table in dataframe
+    :return: None
+    """
     table = soup.select_one("table.table")
     headers = [th.get_text(strip=True) for th in table.find_all("th")]
     rows = []
@@ -40,6 +59,11 @@ def extracting_table_in_dataframe(soup):
     print(df.to_string(index=False))
 
 def pagination():
+    """
+    :param: None
+    Extracts data from 5 pages
+    :return: None
+    """
     base_url = "https://www.scrapethissite.com/pages/forms/"
     headers = {"User-Agent": "Mozilla/5.0"}
     all_rows = []
