@@ -61,7 +61,7 @@ def pagination():
     print(f"Total columns: {len(col_names)}")
     df = pd.DataFrame(all_rows, columns=col_names)
     print(df)
-
+    df.to_csv("table.csv")
 
 
 if __name__ == "__main__":
