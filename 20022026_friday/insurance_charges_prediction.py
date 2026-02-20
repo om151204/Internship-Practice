@@ -103,3 +103,14 @@ test_df = pd.DataFrame(test_datapoint)
 test_prediction = lr_pipeline.predict(test_df)
 final_prediction = np.exp(test_prediction)
 print(final_prediction)
+
+plt.figure()
+plt.scatter(y_test, y_pred)
+plt.xlabel("Actual Charges")
+plt.ylabel("Predicted Charges")
+plt.title("Actual and Predicted Insurance Charges")
+plt.plot(
+    [y_test.min(), y_test.max()],
+    [y_test.min(), y_test.max()],
+)
+plt.show()
