@@ -138,22 +138,22 @@ class HeartDiseasePipline:
         """
         This method evaluates the model.
         :param model_pipeline: Model Object
-        :return: Nonemain.py
+        :return: None
         """
         y_probs = model_pipeline.predict_proba(self.X_test)[:, 1]
         # Lower threshold to 0.35 to catch more "Yes" cases
-        y_pred = (y_probs >= 0.3).astype(int)
+        y_prediction = (y_probs >= 0.3).astype(int)
         print("\nAccuracy:")
-        print(accuracy_score(self.y_test,y_pred))
+        print(accuracy_score(self.y_test,y_prediction))
         print("\nConfusion Matrix:")
-        print(confusion_matrix(self.y_test,y_pred))
+        print(confusion_matrix(self.y_test,y_prediction))
         print("\nClassification Report:")
-        print(classification_report(self.y_test,y_pred))
+        print(classification_report(self.y_test,y_prediction))
 
 
 
 if __name__ == "__main__":
-    obj1 = HeartDiseasePipline("../23022026_monday/logistic_regression/heart_disease.csv")
+    obj1 = HeartDiseasePipline("../../23022026_monday/logistic_regression/heart_disease.csv")
     obj1.load_dataset()
     obj1.perform_eda()
     obj1.fixing_dataset()
