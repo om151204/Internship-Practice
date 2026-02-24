@@ -8,7 +8,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
-
+from imblearn.over_sampling import SMOTE
+from imblearn.pipeline import Pipeline as ImbPipeline
 
 class HeartDiseasePipline:
     def __init__(self,filepath):
@@ -128,7 +129,7 @@ class HeartDiseasePipline:
         :param transformer: preprocessor object
         :return: model pipeline
         """
-        model_pipeline = Pipeline(steps =[("preprocessor",transformer),("classifier",DecisionTreeClassifier( max_depth=None,min_samples_split=6,class_weight="balanced",random_state=42))])
+        model_pipeline = ImbPipeline(steps =[("preprocessor",transformer),("smote", SMOTE(random_state=42)),("classifier",DecisionTreeClassifier( max_depth=None,min_samples_split=6,class_weight="balanced",random_state=42))])
         model_pipeline.fit(self.X_train,self.y_train)
         print("\nModel Trained Successfully")
         return model_pipeline
@@ -139,7 +140,9 @@ class HeartDiseasePipline:
         :param model_pipeline: Model Object
         :return: Nonemain.py
         """
-        y_pred = model_pipeline.predict(self.X_test)
+        y_probs = model_pipeline.predict_proba(self.X_test)[:, 1]
+        # Lower threshold to 0.35 to catch more "Yes" cases
+        y_pred = (y_probs >= 0.3).astype(int)
         print("\nAccuracy:")
         print(accuracy_score(self.y_test,y_pred))
         print("\nConfusion Matrix:")
