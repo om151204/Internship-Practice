@@ -12,7 +12,27 @@ from sklearn.metrics import mean_squared_error,r2_score,mean_absolute_error
 
 seperator = f"\n{"--"*70}\n"
 class Regressor:
+    """
+    This class trains the Decision Tree Regressor on Insurance Dataset
+    """
     def __init__(self):
+        """
+        df (pd.DataFrame): The raw dataset.
+        numeric_features (list): Names of columns with numeric data types.
+        label_encoder_features (list): Names of categorical columns for Ordinal Encoding.
+        onehot_encoder_features (list): Names of categorical columns for One-Hot Encoding.
+        preprocessor (ColumnTransformer): Scikit-learn transformer for feature scaling and encoding.
+        le (OrdinalEncoder): Encoder for features with an inherent order or binary categories.
+        ohe (OneHotEncoder): Encoder for nominal features, using 'drop="first"' to avoid collinearity.
+        X, y (pd.DataFrame/Series): Feature matrix and target vector.
+        X_train, X_test, y_train, y_test (ndarray): Split datasets for training and validation.
+        test_size (float): Proportion of the dataset (0.7) to include in the test split.
+        random_state (int): Seed used by the random number generator for reproducibility.
+        model (DecisionTreeRegressor): The regressor model with pre-defined pruning and depth constraints.
+        pipeline (Pipeline): Scikit-learn pipeline object combining preprocessing and the model.
+        y_prediction (ndarray): Predicted values generated after model inference.
+        """
+
         self.df = None
         self.numeric_features = []
         self.label_encoder_features = []
@@ -34,11 +54,21 @@ class Regressor:
 
 
     def load_dataset(self):
+        """
+        Method to load dataset
+        :return: None
+        """
         self.df = pd.read_csv('../../20022026_friday/data.csv')
         print(self.df.head())
         print("\nDataset Loaded Successfully!",end=seperator)
 
     def data_preprocessing(self):
+        """
+        Performs basic data cleaning and auditing.
+        Prints descriptive statistics, schema information, and null value counts.
+        Identifies and removes duplicate rows from the dataframe.
+        :return: None
+        """
         print("Statistics of the Dataset")
         print(self.df.describe(),end=seperator)
         print("Description of the Dataset")
@@ -50,6 +80,12 @@ class Regressor:
         print(f"Dropped the duplicate value: {self.df.duplicated().sum()}", end=seperator)
 
     def eda(self):
+        """
+        Executes Exploratory Data Analysis via visualization.
+        Generates a correlation heatmap, individual histograms with KDE for
+        numeric distribution, and boxplots to visualize data spread/outliers.
+        :return: None
+        """
         corr = self.df.corr(numeric_only=True)  # Correlation Matrix
         sns.heatmap(corr, annot=True)
         plt.show()
@@ -71,6 +107,11 @@ class Regressor:
         plt.show()
 
     def outliers(self):
+        """
+        Calculates the number of outliers for each numeric feature using
+        the Interquartile Range (IQR) method (1.5 * IQR rule).
+        :return: None
+        """
         print("Outlier Count")
         for col in self.numeric_features:
             q1 = self.df[col].quantile(0.25)
@@ -83,6 +124,12 @@ class Regressor:
         print("Outlier Detection Completed",end=seperator)
 
     def encoder(self):
+        """
+        Configures the ColumnTransformer by mapping specific categorical columns
+        to Ordinal and One-Hot encoders. Sets up the preprocessing pipeline
+        for non-numeric data.
+        :return: None
+        """
         self.label_encoder_features = list(
         self.df.select_dtypes(include=['str']).columns.drop('region', errors='ignore'))
         self.onehot_encoder_features = ['region']
@@ -90,6 +137,12 @@ class Regressor:
         print("Encoding Done Successfully!",end=seperator)
 
     def train_test_split(self):
+        """
+        Separates the dataset into features (X) and target (y) using 'charges'
+        as the dependent variable. Splits data into training and testing sets
+        based on the defined test_size.
+        :return: None
+        """
         self.X = self.df.drop('charges',axis=1)
         self.y = self.df['charges']
         self.X_train,self.X_test,self.y_train,self.y_test = train_test_split(self.X,self.y,test_size=self.test_size,random_state=self.random_state)
@@ -97,17 +150,32 @@ class Regressor:
         print("Train Test Split Done Successfully!",end=seperator)
 
     def model_training(self):
+        """
+         Constructs a Scikit-learn Pipeline incorporating the preprocessor and
+        the DecisionTreeRegressor. Fits the pipeline to the training data.
+        :return: None
+        """
         self.pipeline = Pipeline(steps=[("preprocessor",self.preprocessor),("model",self.model)])
         self.pipeline.fit(self.X_train,self.y_train)
         print("Model Training Completed!",end=seperator)
 
     def performance_evaluation(self):
+        """
+        Generates predictions on the test set and calculates regression metrics
+        including Mean Squared Error (MSE), Mean Absolute Error (MAE), and R2 Score.
+        :return: None
+        """
         self.y_prediction = self.pipeline.predict(self.X_test)
         print(f"Mean Squared Error: {mean_squared_error(self.y_test,self.y_prediction)}")
         print(f"Mean Absolute Error: {mean_absolute_error(self.y_test,self.y_prediction)}")
         print(f"R2 Score: {r2_score(self.y_test,self.y_prediction)}",end=seperator)
 
 def main():
+    """
+    Orchestrates the full machine learning workflow: loading data,
+    preprocessing, EDA, feature encoding, training, and evaluation.
+    :return: None
+    """
     obj = Regressor()
     obj.load_dataset()
     obj.data_preprocessing()
