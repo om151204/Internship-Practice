@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -46,7 +45,7 @@ class Regressor:
         self.X_test = None
         self.y_train = None
         self.y_test = None
-        self.test_size = 0.7
+        self.test_size = 0.2
         self.random_state = 42
         self.model = DecisionTreeRegressor(max_depth=5,min_samples_leaf=10,ccp_alpha=0.01)
         self.pipeline = None
@@ -83,11 +82,21 @@ class Regressor:
         """
         Executes Exploratory Data Analysis via visualization.
         Generates a correlation heatmap, individual histograms with KDE for
-        numeric distribution, and boxplots to visualize data spread/outliers.
+        numeric distribution, and boxplot to visualize data spread/outliers.
         :return: None
         """
         corr = self.df.corr(numeric_only=True)  # Correlation Matrix
         sns.heatmap(corr, annot=True)
+        plt.show()
+
+        col = ['sex','region', 'smoker']
+        for n,i in enumerate(col):
+            plt.subplot(2,2,n+1)
+            plt.grid(alpha=0.2)
+            plt.title(i, fontsize=10)
+            plt.pie(self.df[i].value_counts(), autopct='%1.1f%%', colors=['lightblue','pink','red','yellow'],
+                    labels=self.df[i].value_counts().index)
+        plt.tight_layout()
         plt.show()
 
         self.numeric_features = [cols for cols in self.df.columns if self.df[cols].dtype in ['int64','float64']]
