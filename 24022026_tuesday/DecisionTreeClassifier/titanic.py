@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score,confusion_matrix,classification_report
+from sklearn.tree import plot_tree
 
 separator = f"\n{"--"*80}\n"
 
@@ -124,6 +125,9 @@ def model_training(xtrain,ytrain):
     tree = DecisionTreeClassifier(max_depth=12,max_leaf_nodes=5,min_samples_split=4,ccp_alpha=0.01,random_state=42)
     tree.fit(xtrain,ytrain)
     print("Model Training Done",end=separator)
+    plot_tree(tree)
+    plt.title("Decision Tree Model")
+    plt.show()
     return tree
 
 def model_testing(xtest,ytest,trained_model):
@@ -140,7 +144,7 @@ def model_testing(xtest,ytest,trained_model):
     print(accuracy_score(ytest,y_prediction))
     print("Confusion Matrix\n")
     print(confusion_matrix(ytest,y_prediction))
-    print("Classification Report\n")
+    print("\nClassification Report\n")
     print(classification_report(ytest,y_prediction),end=separator)
 
 
