@@ -4,6 +4,7 @@ import logging
 from matplotlib import pyplot as plt
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import plot_tree
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
@@ -157,6 +158,12 @@ class Regressor:
         self.regressor.fit(self.X_train,self.y_train)
         print("Model Training Completed",end=seperator)
         logging.info("Model Training Completed")
+        trained_model = self.regressor.named_steps['model']
+        single_tree = trained_model.estimators_[0]
+        plt.figure(figsize=(20, 10))
+        plot_tree(single_tree,
+                  feature_names=self.regressor.named_steps['preprocessor'].get_feature_names_out())
+        plt.show()
 
     def model_evaluation(self):
         """
