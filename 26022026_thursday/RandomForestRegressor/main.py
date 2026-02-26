@@ -162,7 +162,7 @@ class Regressor:
         single_tree = trained_model.estimators_[0]
         plt.figure(figsize=(20, 10))
         plot_tree(single_tree,
-                  feature_names=self.regressor.named_steps['preprocessor'].get_feature_names_out())
+                  feature_names=self.regressor.named_steps['preprocessor'].get_feature_names_out(),max_depth=3)
         plt.show()
 
     def model_evaluation(self):
