@@ -40,7 +40,7 @@ class Regressor:
         self.y_test = None
         self.test_size = 0.2
         self.randomstate = 42
-        self.model = RandomForestRegressor(n_estimators=25,ccp_alpha=0.001,min_samples_split=5,max_depth=10)
+        self.model = RandomForestRegressor(n_estimators=25,ccp_alpha=0.001,min_samples_split=5,max_depth=10,verbose=2)
         self.regressor = None
         self.y_prediction = None
 
