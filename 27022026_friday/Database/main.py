@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine,text
+from sqlalchemy import create_engine
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -75,12 +75,12 @@ class Titanic:
         print(self.df.describe(), end=separator)
         print("Data Description\n")
         print(self.df.info(),end=separator)
-        self.df.drop(columns=["Name","Ticket","PassengerId"],inplace=True)
+        # self.df.drop(columns=["Name","Ticket","PassengerId"],inplace=True)
         print("Dropped irrelevant from the dataset\n")
         print(self.df.head(),end=separator)
         print("Finding Null Values in each column\n")
         print(self.df.isnull().sum(),end=separator)
-        self.df.drop("Cabin",axis=1,inplace=True)
+        # self.df.drop("Cabin",axis=1,inplace=True)
         print("Dropped Cabin as it has many null values\n")
         print(self.df.head(),end=separator)
         median_age = self.df["Age"].median()
@@ -98,7 +98,7 @@ class Titanic:
         """
 
         self.df["FamilySize"] = self.df["SibSp"] + self.df["Parch"] + 1
-        self.df.drop(columns=["SibSp","Parch"],inplace=True)
+        # self.df.drop(columns=["SibSp","Parch"],inplace=True)
         print("Feature Engineering Done\n")
         print(self.df.head(),end=separator)
 
@@ -117,7 +117,7 @@ class Titanic:
         """
 
         print("Outlier Detection\n")
-        cols = [col for col in self.df if self.df[col].dtypes == "int64" or self.df[col].dtypes == "float64"]
+        cols = ["Pclass","Age","Fare","FamilySize",]
         for i, col in enumerate(cols):
             plt.subplot(3,2,i+1)
             sns.boxplot(x=col,data=self.df)
@@ -133,7 +133,7 @@ class Titanic:
         :return :None
         """
 
-        self.X = self.df[[cols for cols in self.df if cols != "Survived"]]
+        self.X = self.df[[cols for cols in self.df if cols not in ["Survived","SibSp","Parch","Name","Ticket","PassengerId","Cabin","predicted_class"]]]
         self.y = self.df[["Survived"]]
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X,self.y,test_size=0.3,random_state=42)
         print("Train Test Split Done",end=separator)
@@ -199,7 +199,6 @@ def main():
     model.encoding()
     model.model_training()
     y_prediction = model.model_testing()
-    model_prediction = ["survived" if pred == False else "not survived" for pred in y_prediction]
 
     full_x = model.X.copy()
 
