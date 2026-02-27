@@ -182,6 +182,10 @@ class Titanic:
 
 
 def main():
+    """
+    Driver code for systematic calling
+    :return: None
+    """
     server = "localhost"
     database = "om"
     loader = MSSQLDataLoading(server, database)   # Initialize loader
