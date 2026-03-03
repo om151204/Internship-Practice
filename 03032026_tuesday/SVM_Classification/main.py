@@ -1,9 +1,10 @@
 import pandas as pd
+import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import confusion_matrix, classification_report
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OrdinalEncoder
 from sklearn.svm import SVC
@@ -138,7 +139,19 @@ class SVMClassifier:
         """
         try:
             self.pipeline = Pipeline(steps = [("preprocessing", self.preprocessing),("model",self.model)])
-            self.pipeline.fit(self.X_train,self.y_train)
+
+            param_grid = {
+                "model__C":[0.1,1,10,100],
+                "model__gamma": [1,0.1,0.01,0.001],
+                "model__kernel":["linear","poly","rbf"]
+            }
+            print("Starting Grid Search CV... this may take a while...\n")
+            grid_search = GridSearchCV(self.pipeline,param_grid,refit=True,verbose=2,cv=5)
+            grid_search.fit(self.X_train,self.y_train)
+            self.pipeline = grid_search.best_estimator_
+            self.model = grid_search.best_estimator_.named_steps["model"]
+            print(end=separator)
+            print(f"Best Parameters:{grid_search.best_params_}\n")
             print("Model Training Done",end = separator)
         except Exception as e:
             print("Error while training model training",e)
@@ -156,7 +169,6 @@ class SVMClassifier:
             print(classification_report(self.y_test,y_prediction))
         except Exception as e:
             print("Error checking model performance",e)
-
 
 def main():
     """
