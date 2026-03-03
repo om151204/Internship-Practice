@@ -89,6 +89,11 @@ class SVMClassifier:
         try:
             print("\nChecking Outliers\n")
             numeric_features = self.df.select_dtypes(include = 'int64').columns
+            for i,col in enumerate(numeric_features):
+                plt.subplot(2,2,i+1)
+                sns.boxplot(y=self.df[col])
+                plt.title(col)
+            plt.show()
             for col in numeric_features:
                 q1 = self.df[col].quantile(0.25)
                 q3 = self.df[col].quantile(0.75)
