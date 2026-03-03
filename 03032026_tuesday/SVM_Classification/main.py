@@ -138,18 +138,18 @@ class SVMClassifier:
         :return:
         """
         try:
-            self.pipeline = Pipeline(steps = [("preprocessing", self.preprocessing),("model",self.model)])
+            self.pipeline = Pipeline(steps = [("preprocessing", self.preprocessing),("training",self.model)])
 
             param_grid = {
-                "model__C":[0.1,1,10,100],
-                "model__gamma": [1,0.1,0.01,0.001],
-                "model__kernel":["linear","poly","rbf"]
+                "training__C":[0.1,1,10,100],
+                "training__gamma": [1,0.1,0.01,0.001],
+                "training__kernel":["linear","poly","rbf","sigmoid"]
             }
             print("Starting Grid Search CV... this may take a while...\n")
             grid_search = GridSearchCV(self.pipeline,param_grid,refit=True,verbose=2,cv=5)
             grid_search.fit(self.X_train,self.y_train)
             self.pipeline = grid_search.best_estimator_
-            self.model = grid_search.best_estimator_.named_steps["model"]
+            self.model = grid_search.best_estimator_.named_steps["training"]
             print(end=separator)
             print(f"Best Parameters:{grid_search.best_params_}\n")
             print("Model Training Done",end = separator)
@@ -170,6 +170,35 @@ class SVMClassifier:
         except Exception as e:
             print("Error checking model performance",e)
 
+    def plot_decision_boundary(self):
+        try:
+            fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
+            genders = ['Male', 'Female']  # List to iterate through
+
+            for i, gender in enumerate(genders):
+                # 1. Use 'i' to pick the correct plot (0 for Left, 1 for Right)
+                ax = axes[i]
+
+                # 2. Create Grid and Predict
+                x = np.linspace(self.X['age'].min(), self.X['age'].max(), 100)
+                y = np.linspace(self.X['estimated_salary'].min(), self.X['estimated_salary'].max(), 100)
+                xx, yy = np.meshgrid(x, y)
+
+                grid = pd.DataFrame({'gender': gender, 'age': xx.ravel(), 'estimated_salary': yy.ravel()})
+                z = self.pipeline.predict(grid).reshape(xx.shape)
+
+                # 3. Plot
+                ax.contourf(xx, yy, z, alpha=0.3, cmap='coolwarm')
+
+                subset = self.df[self.df['gender'] == gender]
+                ax.scatter(subset['age'], subset['estimated_salary'], c=subset['purchased'], cmap='coolwarm',
+                           edgecolors='k')
+                ax.set_title(gender)
+
+            plt.show()
+        except Exception as e:
+            print(f"Error: {e}")
+
 def main():
     """
     This function executes the end-to-end SVM Classification pipeline.
@@ -184,6 +213,7 @@ def main():
     obj.train_test_split()
     obj.model_training()
     obj.model_performance()
+    obj.plot_decision_boundary()
 
 if __name__ == "__main__":
     main()
