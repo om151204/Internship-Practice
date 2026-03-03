@@ -198,7 +198,7 @@ def main():
     model.splitting()
     model.encoding()
     model.model_training()
-    y_prediction = model.model_testing()
+    model.model_testing()
 
     full_x = model.X.copy()
 
