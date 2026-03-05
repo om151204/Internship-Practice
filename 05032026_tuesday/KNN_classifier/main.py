@@ -32,7 +32,7 @@ class KNNClassifier:
         self.y_train = None
         self.y_test = None
         self.random_state = 42
-        self.test_size = 0.2
+        self.test_size = 0.3
         self.model = KNeighborsClassifier(n_neighbors=5)
         self.pipeline = None
 
