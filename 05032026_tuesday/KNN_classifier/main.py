@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from matplotlib import pyplot as plt
 import seaborn as sns
 from sklearn.compose import ColumnTransformer
@@ -8,6 +7,7 @@ from sklearn.model_selection import train_test_split,GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OrdinalEncoder
 from sklearn.neighbors import KNeighborsClassifier
+import joblib
 
 separator = f"\n{'--'*70}\n"
 
@@ -177,13 +177,22 @@ class KNNClassifier:
         except Exception as e:
             print("Error checking model performance",e)
 
+    def save_model(self):
+        """
+        This method saves the model
+        :return: None
+        """
+        self.model_performance()
+        joblib.dump(self.pipeline,"knn_model.pkl")
+        print("Model saved successfully",end = separator)
+
 def main():
     """
     This function executes the end-to-end KNN Classification pipeline.
     :return: None
     """
     obj = KNNClassifier("../../03032026_tuesday/data/user_data.csv")
-    obj.model_performance()
+    obj.save_model()
 
 if __name__ == "__main__":
     main()
