@@ -35,6 +35,10 @@ class CustomerSegmentation:
             print("File not found, please try again\n")
 
     def data_preprocessing(self):
+        """
+        This method performs basic pre-processing and checks shape,statistics and drops unnecessary columns
+        :return: None
+        """
         try:
             self.load_data()
             print(f"Dataset shape:- {self.df.shape}")
@@ -51,6 +55,10 @@ class CustomerSegmentation:
             print("Error in data preprocessing",e)
 
     def eda(self):
+        """
+        This method performs eda using heatmap,boxplot and scatter plot
+        :return: None
+        """
         try:
             self.data_preprocessing()
             corr = self.df.corr(numeric_only=True)
@@ -76,6 +84,10 @@ class CustomerSegmentation:
             print("Error in eda",e)
 
     def feature_encoding(self):
+        """
+        This method performs label encoding on gender column
+        :return: None
+        """
         try:
             self.eda()
             self.df["Gender"] = self.encoder.fit_transform(self.df["Gender"])
@@ -84,6 +96,10 @@ class CustomerSegmentation:
             print("Error in feature encoding",e)
 
     def feature_scaling(self):
+        """
+        This method performs standard scaling on all the numeric columns
+        :return: None
+        """
         try:
             self.feature_encoding()
             self.columns = self.df.columns
@@ -94,6 +110,10 @@ class CustomerSegmentation:
             print("Error in feature scaling",e)
 
     def elbow_method(self):
+        """
+        This method performs elbow method to find the optimum number of clusters
+        :return: None
+        """
         try:
             self.feature_scaling()
             self.wcss = []
@@ -110,6 +130,10 @@ class CustomerSegmentation:
             print("Error in elbow method",e)
 
     def train_kmeans(self):
+        """
+        This method trains the k-means clustering algorithm on the dataset
+        :return: None
+        """
         try:
             self.elbow_method()
             self.model = KMeans(n_clusters = 6, random_state=self.randomstate)
@@ -119,6 +143,10 @@ class CustomerSegmentation:
             print("Error in training the model",e)
 
     def visualize_clusters(self):
+        """
+        This method visualizes the formation of clusters
+        :return: None
+        """
         try:
             self.train_kmeans()
             plt.figure(figsize = (10,7))
@@ -133,6 +161,10 @@ class CustomerSegmentation:
             print("Error in visualizing clusters",e)
 
 def main():
+    """
+    It is the driver function to execute main logic
+    :return: None
+    """
     customer_segmentation = CustomerSegmentation()
     customer_segmentation.visualize_clusters()
 
