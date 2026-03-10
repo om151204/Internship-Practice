@@ -2,6 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 sep = f"\n{'---'*70}\n\n"
@@ -118,7 +119,7 @@ class CustomerSegmentation:
             self.feature_scaling()
             self.wcss = []
             for i in range(1,11):
-                kmeans = KMeans(n_clusters=i, random_state=self.randomstate)
+                kmeans = KMeans(n_clusters=i, random_state=self.randomstate,init='k-means++')
                 kmeans.fit(self.df)
                 self.wcss.append(kmeans.inertia_)
             plt.plot(range(1,11),self.wcss,marker='o')
@@ -136,8 +137,12 @@ class CustomerSegmentation:
         """
         try:
             self.elbow_method()
-            self.model = KMeans(n_clusters = 6, random_state=self.randomstate)
+            self.model = KMeans(n_clusters = 6, random_state=self.randomstate,init='k-means++')
             self.df["Clusters_formed"] = self.model.fit_predict(self.df)
+            print(self.df["Clusters_formed"].value_counts())
+            # Silhouette score has range from 1 to -1 (alternative of elbow method used to determine appropriate value of k)
+            score = silhouette_score(self.df, self.df["Clusters_formed"])  # Closer to 1 is better
+            print(f'\nSilhouette Score: {score:.3f}\n')
             print("Training completed and clusters assigned",end=sep)
         except Exception as e:
             print("Error in training the model",e)
