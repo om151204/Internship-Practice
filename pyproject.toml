@@ -26,6 +26,7 @@ dependencies = [
     "scikit-learn (>=1.8.0,<2.0.0)",
     "imblearn (>=0.0,<0.1)",
     "mlxtend (>=0.24.0,<0.25.0)",
+    "tensorflow (>=2.21.0,<3.0.0)",
 ]
 
 
