@@ -14,7 +14,13 @@ from tensorflow.keras.models import Sequential
 sep = f"\n{'--'*80}\n\n"
 
 class TitanicDeepLearning:
+    """
+    A deep learning pipeline for predicting Titanic passenger survival.
+    """
     def __init__(self):
+        """
+        Loads the Titanic dataset from a CSV file.
+        """
         self.df = None
         self.scaler = StandardScaler()
         self.encoder = OneHotEncoder(handle_unknown="ignore")
@@ -32,6 +38,10 @@ class TitanicDeepLearning:
         self.history = None
 
     def load_data(self):
+        """
+        Loads the Titanic dataset from a CSV file.
+        :return: None
+        """
         try:
             self.df = pd.read_csv("Titanic-Dataset.csv")
             print("Data set Loaded Successfully\n")
@@ -42,6 +52,10 @@ class TitanicDeepLearning:
             print("Error file loading the dataset",e,end=sep)
 
     def preprocess_data(self):
+        """
+        Cleans data, handles missing values, and performs feature engineering.
+        :return: None
+        """
         try:
             self.load_data()
             print("Dataset Info\n")
@@ -63,6 +77,10 @@ class TitanicDeepLearning:
             print("Error while preprocessing dataset",e,end=sep)
 
     def eda(self):
+        """
+        Generates a correlation heatmap to visualize feature relationships.
+        :return: None
+        """
         try:
             self.preprocess_data()
             corr = self.df.corr(numeric_only=True)
@@ -73,6 +91,10 @@ class TitanicDeepLearning:
             print("Error while performing eda",e,end=sep)
 
     def build_pipeline(self):
+        """
+        Initializes the ColumnTransformer for scaling and encoding features.
+        :return: None
+        """
         try:
             self.eda()
             numeric_features = ["Age","Fare","Pclass","FamilySize"]
@@ -90,6 +112,10 @@ class TitanicDeepLearning:
             print("Error in creating preprocessing pipeline",e,end=sep)
 
     def train_test_split(self):
+        """
+        Splits the dataset into stratified training and testing sets.
+        :return: None
+        """
         try:
             self.build_pipeline()
             self.X = self.df.drop(columns="Survived")
@@ -101,6 +127,10 @@ class TitanicDeepLearning:
             print("Error in train_test_split",e,end=sep)
 
     def apply_pipeline(self):
+        """
+        Fits and transforms the features using the preprocessing pipeline.
+        :return: None
+        """
         try:
             self.train_test_split()
             self.X_train = self.preprocessing_pipeline.fit_transform(self.X_train)
@@ -110,6 +140,10 @@ class TitanicDeepLearning:
             print("Error in applying pipeline to training data",e,end=sep)
 
     def build_model(self):
+        """
+        Defines and compiles the Sequential neural network architecture.
+        :return:None
+        """
         try:
             self.apply_pipeline()
             self.input_shape = self.X_train.shape[1]
@@ -128,6 +162,10 @@ class TitanicDeepLearning:
             print("Error in building model",e,end=sep)
 
     def train_model(self):
+        """
+        Trains the model using EarlyStopping to prevent overfitting.
+        :return:None
+        """
         try:
             self.build_model()
             early_stop = EarlyStopping(
@@ -149,6 +187,10 @@ class TitanicDeepLearning:
             print("Error in training model",e,end=sep)
 
     def evaluate_model(self):
+        """
+        Predicts test outcomes and prints performance metrics.
+        :return:None
+        """
         try:
             self.train_model()
             predictions = self.model.predict(self.X_test)
@@ -164,6 +206,10 @@ class TitanicDeepLearning:
             print("Error in evaluating model",e,end=sep)
 
     def plot_history(self):
+        """
+        Visualizes training and validation loss over epochs.
+        :return:None
+        """
         try:
             self.evaluate_model()
             plt.figure(figsize = (8,5))
@@ -178,6 +224,13 @@ class TitanicDeepLearning:
             print("Error in plotting history",e,end=sep)
 
 def main():
+    """
+    Orchestrates the complete machine learning workflow:
+    1. Instantiates the TitanicDeepLearning class.
+    2. Executes the pipeline from data loading to model training.
+    3. Displays evaluation metrics and loss curves.
+    :return: None
+    """
     preprocessor = TitanicDeepLearning()
     preprocessor.plot_history()
 
