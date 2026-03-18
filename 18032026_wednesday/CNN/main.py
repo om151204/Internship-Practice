@@ -1,5 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import layers,models
+import matplotlib.pyplot as plt
 
 sep = f"\n{'---' * 70}\n\n"
 
@@ -7,6 +8,7 @@ class SimpleCNN:
     """
     Class to train and evaluate a simple convolutional neural network on mnist dataset
     """
+
     def __init__(self):
         """
         Constructor that initializes required variables
@@ -16,6 +18,7 @@ class SimpleCNN:
         self.X_test = None
         self.y_train = None
         self.y_test = None
+        self.history = None
 
     def load_dataset(self):
         """
@@ -35,7 +38,7 @@ class SimpleCNN:
 
             print(f"Training Shape:- {self.X_train.shape}")
             print(f"Testing Shape:- {self.X_test.shape}")
-            print("\n Dataset Loaded Successfully!!",end=sep)
+            print("\n Dataset Loaded Successfully!!", end=sep)
         except Exception as e:
             print(f"Error while loading dataset: {e}")
 
@@ -64,7 +67,7 @@ class SimpleCNN:
             )
 
             self.model.summary()
-            print("\nModel built Successfully!!",end=sep)
+            print("\nModel built Successfully!!", end=sep)
         except Exception as e:
             print(f"Error while building model: {e}")
 
@@ -75,13 +78,14 @@ class SimpleCNN:
         """
         try:
             self.build_model()
-            self.model.fit(
+            self.history = self.model.fit(
                 self.X_train,
                 self.y_train,
                 epochs=5,
                 validation_data=(self.X_test, self.y_test)
             )
-            print("\nModel Trained Successfully!!",end=sep)
+
+            print("\nModel Trained Successfully!!", end=sep)
         except Exception as e:
             print(f"Error while training model: {e}")
 
@@ -94,9 +98,40 @@ class SimpleCNN:
             self.train_model()
             loss, accuracy = self.model.evaluate(self.X_test, self.y_test)
             print(f"Test Accuracy:- {accuracy:.2%}")
-            print("\nModel Evaluated Successfully!!",end=sep)
+            print("\nModel Evaluated Successfully!!", end=sep)
         except Exception as e:
             print(f"Error while evaluating model: {e}")
+
+    def plot_performance(self):
+        try:
+            """
+            Method that plots training and validation performance
+            :return: None
+            """
+            self.evaluate_model()
+            plt.figure(figsize=(12, 4))
+            # plot for accuracy
+            plt.subplot(1, 2, 1)
+            plt.plot(self.history.history['accuracy'], label='Train Accuracy')
+            plt.plot(self.history.history['val_accuracy'], label='Val Accuracy')
+            plt.title('Model Accuracy')
+            plt.xlabel('Epoch')
+            plt.ylabel('Accuracy')
+            plt.legend()
+            # plot for loss
+            plt.subplot(1, 2, 2)
+            plt.plot(self.history.history['loss'], label='Train Loss')
+            plt.plot(self.history.history['val_loss'], label='Val Loss')
+            plt.title('Model Loss')
+            plt.xlabel('Epoch')
+            plt.ylabel('Loss')
+            plt.legend()
+
+            plt.tight_layout()
+            plt.show()
+            print("\nPlotting done successfully!!")
+        except Exception as e:
+            print(f"Error while plotting: {e}")
 
 
 def main():
@@ -105,7 +140,8 @@ def main():
     :return:
     """
     cnn = SimpleCNN()
-    cnn.evaluate_model()
+    cnn.plot_performance()
+
 
 if __name__ == "__main__":
     main()
