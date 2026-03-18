@@ -58,13 +58,16 @@ class SentimentLSTM:
             texts = self.df["Review"]
             self.y = self.df["Sentiment"]
 
+            # Create a vocabulary index based on word frequency
             self.tokenizer.fit_on_texts(texts)
 
+            # Convert sentences into lists of integers (e.g., "love" becomes 5)
             sequences = self.tokenizer.texts_to_sequences(texts)
 
+            # Ensure all inputs are exactly 5 words long by adding zeros (padding)
             self.X = pad_sequences(sequences, maxlen=self.max_len)
-            print(self.X.shape)
-            print(self.y.shape)
+            print(f"X Shape:- {self.X.shape}")
+            print(f"Y Shape:- {self.y.shape}")
             print("\nData Preprocessed Successfully!!",end=sep)
         except Exception as e:
             print(f"Error in preprocessing data {e}")
@@ -76,18 +79,24 @@ class SentimentLSTM:
         """
         try:
             self.preprocess_data()
+            # Calculate total unique words + 1 for the padding token
             vocab_size = len(self.tokenizer.word_index) + 1
+            print(f"Vocab Size:- {vocab_size}")
             self.model = Sequential()
 
+            # Layer 1: Turns word integers into dense vectors of fixed size (8)
             self.model.add(
                 Embedding(
                     input_dim=vocab_size, output_dim=8, input_length=self.max_len
                 ))
 
+            # Layer 2: LSTM with 16 units to capture the sequence/order of words
             self.model.add(LSTM(16))
 
+            # Layer 3: Output layer with Sigmoid to get a probability between 0 and 1
             self.model.add(Dense(1, activation='sigmoid'))
 
+            # Define the optimizer (Adam) and the loss function for binary classification
             self.model.compile(
                 optimizer='adam',
                 loss='binary_crossentropy',
@@ -104,6 +113,7 @@ class SentimentLSTM:
         """
         try:
             self.build_model()
+            # Pass features (X) and labels (y) to the model for 20 iterations
             self.model.fit(self.X, self.y, epochs=20, verbose=1)
             print("\nModel Trained Successfully!!",end=sep)
         except Exception as e:
@@ -118,12 +128,15 @@ class SentimentLSTM:
             self.train_model()
             test_text = ["I really love this"]
 
+            # Convert test string to the same numerical format used during training
             seq = self.tokenizer.texts_to_sequences(test_text)
             padded = pad_sequences(seq, maxlen=self.max_len)
 
+            # Get the probability score from the model
             prediction = self.model.predict(padded)
             print(f"\nPrediction:- {prediction}")
 
+            # Threshold the result (0.5 is the standard cutoff for binary tasks)
             if prediction > 0.5:
                 print("Positive Sentiment")
             else:
