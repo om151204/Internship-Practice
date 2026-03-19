@@ -64,7 +64,7 @@ class SimpleRNNModel:
 
             self.model = Sequential([
                 # Turns integers into dense vectors of fixed size (8)
-                Embedding(input_dim=vocab_size, output_dim=8),
+                Embedding(input_dim=vocab_size, output_dim=8,input_shape=(self.padded_sequences.shape[1],)),
 
                 # Simple Recurrent layer to process sequence data with 16 units
                 SimpleRNN(16),
