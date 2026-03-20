@@ -116,3 +116,62 @@ class MiniGPT(tf.keras.Model):
 
         return self.final_layer(x)
 
+def main():
+    """
+    Orchestrates the data preparation, model training, and text generation demonstration.
+    :return: None
+    """
+    training_samples = [
+        "the neural network learns patterns",
+        "deep learning models need data",
+        "artificial intelligence is changing technology",
+        "transformers process sequences in parallel",
+        "large language models generate text",
+        "machine learning improves with experience",
+        "python is great for data science"
+    ]
+
+    # Prepare data for training
+    tokenizer = Tokenizer(training_samples)
+    all_encoded = []
+    for s in training_samples:
+        all_encoded.extend(tokenizer.encode(s))
+
+    # Create overlapping sequences (sliding window) for next-word prediction
+    xs, ys = [], []
+    seq_len = 4
+    for i in range(len(all_encoded) - seq_len):
+        xs.append(all_encoded[i: i + seq_len])
+        ys.append(all_encoded[i + 1: i + seq_len + 1])
+
+    x, y = np.array(xs), np.array(ys)
+
+    # Initialize and compile the model
+    model = MiniGPT(vocab_size=tokenizer.vocab_size)
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.005),
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+    )
+
+    print("--- Training Started ---")
+    model.fit(x, y, epochs=100, verbose=0)
+    print("--- Training Complete ---\n")
+
+    def generate(prompt, length=4):
+        """Autoregressively generates text token-by-token based on an initial prompt."""
+        tokens = tokenizer.encode(prompt)
+        for _ in range(length):
+            input_tokens = np.array([tokens])
+            # Predict the next token (logit scores)
+            predictions = model(input_tokens, training=False)
+            # Pick the word with the highest probability at the last position
+            next_id = tf.argmax(predictions[0, -1, :]).numpy()
+            tokens.append(next_id)
+        return tokenizer.decode(tokens)
+
+    # Test the model generation
+    print(f"Result: {generate('deep learning')}")
+
+
+if __name__ == "__main__":
+    main()
