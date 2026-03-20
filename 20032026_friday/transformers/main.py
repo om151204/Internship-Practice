@@ -1,41 +1,29 @@
+import tensorflow as tf
+from tensorflow.keras import layers
 import numpy as np
-from tensorflow.keras.preprocessing.text import Tokenizer
-from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.layers import Dense,Embedding,LayerNormalization
 
-sep = f"\n{'--'*70}\n\n"
-
-class DataLoader:
-    def __init__(self,sentences):
-        self.sentences = sentences
-        self.tokenizer = Tokenizer(filters = "")
-
-    def load_data(self):
+class Tokenizer:
+    """
+    A basic word-level tokenizer that maps unique words to integer IDs
+    and reconstructs text from token sequences.
+    """
+    def __init__(self, texts):
         """
-        This method loads the data and performs tokenization on it
-        :return: padded: Pad sequences of data
+        Initializes the tokenizer by building a vocabulary from the input corpus.
+        :param texts: texts (list of str):
         """
-        try:
-            self.tokenizer.fit_on_texts(self.sentences)
+        # Create a unique sorted list of all words in the provided corpus
+        all_text = " ".join(texts)
+        self.words = sorted(set(all_text.split()))
+        # Build lookup dictionaries for encoding and decoding
+        self.word2idx = {w: i for i, w in enumerate(self.words)}
+        self.idx2word = {i: w for w, i in self.word2idx.items()}
+        self.vocab_size = len(self.words)
 
-            sequences = self.tokenizer.texts_to_sequences(self.sentences)
+    def encode(self, text):
+        """Converts a string of text into a list of integer tokens."""
+        return [self.word2idx[w] for w in text.split() if w in self.word2idx]
 
-            padded = pad_sequences(sequences, padding="post")
-            print("Padded Sequence:-\n")
-            print(padded)
-            print("Data Loaded and Preprocessed Successfully!!",end = sep)
-            return padded
-        except Exception as e:
-            print(f"Error Loading Data {e}",end = sep)
-
-    def get_vocab_size(self):
-        """
-        This method returns the size of the vocabulary
-        :return: Size of the vocabulary
-        """
-        try:
-            print("Vocabulary Size :-",len(self.tokenizer.word_index) + 1)
-            return len(self.tokenizer.word_index) + 1
-        except Exception as e:
-            print(f"Error Returning Vocabulary size {e}",end = sep)
-
+    def decode(self, tokens):
+        """Converts a list of integer tokens back into a human-readable string."""
+        return " ".join([self.idx2word[int(t)] for t in tokens])
