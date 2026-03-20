@@ -72,3 +72,47 @@ class TransformerBlock(layers.Layer):
         return self.layer_norm2(out1 + ffn_output)
 
 
+class MiniGPT(tf.keras.Model):
+    """
+    A simplified GPT-style decoder-only model for autoregressive text generation.
+    """
+    def __init__(self, vocab_size, d_model=64, num_heads=4, num_layers=2, max_len=100):
+        """
+        Initializes the MiniGPT model architecture.
+        :param vocab_size: Total number of unique tokens in the vocabulary.
+        :param d_model: Dimensionality of the embedding and hidden states.
+        :param num_heads: Number of attention heads in the Transformer blocks.
+        :param num_layers: Number of Transformer blocks to stack.
+        :param max_len: Maximum sequence length supported by positional embeddings.
+        """
+        super().__init__()
+        self.d_model = d_model
+        # Learned embeddings for both token identity and token position
+        self.embedding = layers.Embedding(vocab_size, d_model)
+        self.pos_emb = layers.Embedding(max_len, d_model)
+        # Stack of multiple Transformer blocks for deep feature extraction
+        self.blocks = [TransformerBlock(d_model, num_heads, d_model * 4) for _ in range(num_layers)]
+        self.dropout = layers.Dropout(0.1)
+        # Final linear layer to project back to vocabulary size for word prediction
+        self.final_layer = layers.Dense(vocab_size)
+
+    def call(self, x, training=False):
+        """
+        Performs the forward pass to generate logits for the next token in a sequence.
+        :param x: Input tensor of token indices with shape (batch_size, seq_len).
+        :param training: If True, applies dropout layers.
+        :return: Logits for each token in the vocabulary with shape (batch_size, seq_len, vocab_size).
+        """
+        seq_len = tf.shape(x)[1]
+        positions = tf.range(start=0, limit=seq_len, delta=1)
+
+        # Sum the token and position embeddings
+        x = self.embedding(x) + self.pos_emb(positions)
+        x = self.dropout(x, training=training)
+
+        # Pass through the sequential stack of Transformer blocks
+        for block in self.blocks:
+            x = block(x, training=training)
+
+        return self.final_layer(x)
+
