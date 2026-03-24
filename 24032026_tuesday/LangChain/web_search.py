@@ -25,7 +25,7 @@ st.markdown("""
 with st.sidebar:
     st.title("AI Settings")
     st.divider()
-    model_name = st.selectbox("Choose Model", ["llama-3.3-70b-versatile", "llama3-8b-8192"])
+    model_name = st.selectbox("Choose Model", ["llama-3.3-70b-versatile"])
     temp = st.slider("Creativity (Temperature)", 0.0, 1.0, 0.3)
     if st.button("🗑️ Clear Chat History", use_container_width=True):
         st.session_state.messages = []
