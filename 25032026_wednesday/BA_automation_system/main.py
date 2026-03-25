@@ -21,7 +21,7 @@ def run(pdf_path):
     - Tasks 
 
     """
-    result = agent.run(query)
+    result = agent.invoke(query)
     return result
 
 if __name__ == "__main__":
