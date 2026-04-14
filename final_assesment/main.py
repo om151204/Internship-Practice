@@ -19,7 +19,7 @@ tool = get_retriever()
 
 middleware = [
     SummarizationMiddleware(
-        model=MODEL,
+        model=llm,
         trigger = ("messages",6),
         keep = ("messages",6),
     ),
