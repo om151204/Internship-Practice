@@ -12,7 +12,6 @@ problem-solving exercises, and skill-building activities undertaken during my in
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
 - [Contributing](#contributing)
-- [License](#license)
 - [Contact](#contact)
 
 ## Purpose
