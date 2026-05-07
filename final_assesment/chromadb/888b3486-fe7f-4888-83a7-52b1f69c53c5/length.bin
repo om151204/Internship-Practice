@@ -1,0 +1,5 @@
+information (news, prices, current events), it routes to web_search. If the query can be answered from the
+ingested document knowledge base, it routes to pdf_retriever. The agent's system prompt includes tool
+descriptions that guide this selection.
+Q: What chunking strategy is recommended for PDF ingestion?
+A: Use RecursiveCharacterTextSplitter with chunk_size=500 and chunk_overlap=50. This balanc
